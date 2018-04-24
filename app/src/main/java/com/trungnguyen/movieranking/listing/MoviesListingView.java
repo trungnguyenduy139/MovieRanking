@@ -1,7 +1,6 @@
 package com.trungnguyen.movieranking.listing;
 
 import com.trungnguyen.movieranking.model.Movie;
-import com.trungnguyen.movieranking.network.NetworkError;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ interface MoviesListingView {
 
     void loadingStarted();
 
-    void loadingFailed(NetworkError networkError);
+    void loadingFailed(String errorMsg);
 
     void onMovieClicked(Movie movie);
 }

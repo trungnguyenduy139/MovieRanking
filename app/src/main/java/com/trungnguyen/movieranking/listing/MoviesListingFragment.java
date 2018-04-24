@@ -4,7 +4,6 @@ package com.trungnguyen.movieranking.listing;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
@@ -22,7 +21,7 @@ import com.trungnguyen.movieranking.util.Constants;
 import com.trungnguyen.movieranking.model.Movie;
 import com.trungnguyen.movieranking.R;
 import com.trungnguyen.movieranking.listing.sorting.SortingDialogFragment;
-import com.trungnguyen.movieranking.network.NetworkError;
+import com.trungnguyen.movieranking.util.InfiniteScrollListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +31,11 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+
+/**
+ * @author arun
+ * @author Trung Nguyen
+ */
 
 public class MoviesListingFragment extends Fragment implements MoviesListingView {
     @Inject
@@ -70,14 +74,20 @@ public class MoviesListingFragment extends Fragment implements MoviesListingView
         View rootView = inflater.inflate(R.layout.fragment_movies, container, false);
         unbinder = ButterKnife.bind(this, rootView);
         initLayoutReferences();
-        moviesListing.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//        moviesListing.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//
+//                if (!recyclerView.canScrollVertically(1)) {
+//                    moviesPresenter.nextPage();
+//                }
+//            }
+//        });
+        moviesListing.addOnScrollListener(new InfiniteScrollListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-                if (!recyclerView.canScrollVertically(1)) {
-                    moviesPresenter.nextPage();
-                }
+            protected void onLoadMore() {
+                moviesPresenter.nextPage();
             }
         });
         return rootView;
@@ -150,10 +160,8 @@ public class MoviesListingFragment extends Fragment implements MoviesListingView
     }
 
     @Override
-    public void loadingFailed(NetworkError errorMessage) {
-        Snackbar snackbar = Snackbar.make(moviesListing, errorMessage.getAppErrorMessage(), Snackbar.LENGTH_INDEFINITE);
-        snackbar.show();
-        new Handler().postDelayed(snackbar::dismiss, 2000);
+    public void loadingFailed(String errorMessage) {
+        Snackbar.make(moviesListing, errorMessage, Snackbar.LENGTH_LONG).show();
     }
 
     @Override

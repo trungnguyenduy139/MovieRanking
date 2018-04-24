@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * @author arun
+ * @author Trung Nguyen
  */
 interface MovieDetailsView {
     void showDetails(Movie movie);
@@ -19,4 +20,6 @@ interface MovieDetailsView {
     void showFavorited();
 
     void showUnFavorited();
+
+    void onGetDetailFailed(String errorMsg);
 }

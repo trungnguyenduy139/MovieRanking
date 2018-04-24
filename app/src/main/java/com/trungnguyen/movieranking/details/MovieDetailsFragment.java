@@ -8,8 +8,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -40,12 +42,19 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+/**
+ * @author arun
+ * @author Trung Nguyen
+ */
+
 public class MovieDetailsFragment extends Fragment implements MovieDetailsView, View.OnClickListener {
     @Inject
     MovieDetailsPresenter movieDetailsPresenter;
 
     @BindView(R.id.movie_poster)
     ImageView poster;
+    @BindView(R.id.scrolling_container)
+    NestedScrollView mainContent;
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbar;
     @BindView(R.id.movie_name)
@@ -212,6 +221,11 @@ public class MovieDetailsFragment extends Fragment implements MovieDetailsView, 
     @Override
     public void showUnFavorited() {
         favorite.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_favorite_border_white_24dp));
+    }
+
+    @Override
+    public void onGetDetailFailed(String errorMsg) {
+        Snackbar.make(mainContent, errorMsg, Snackbar.LENGTH_LONG).show();
     }
 
     @OnClick(R.id.favorite)

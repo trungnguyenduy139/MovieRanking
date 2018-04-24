@@ -4,6 +4,7 @@ import com.trungnguyen.movieranking.model.Movie;
 import com.trungnguyen.movieranking.model.Review;
 import com.trungnguyen.movieranking.model.Video;
 import com.trungnguyen.movieranking.favorites.FavoritesInteractor;
+import com.trungnguyen.movieranking.network.NetworkError;
 import com.trungnguyen.movieranking.util.RxUtils;
 
 import java.util.List;
@@ -56,7 +57,7 @@ class MovieDetailsPresenterImpl implements MovieDetailsPresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
 //                .subscribe(this::onGetTrailersSuccess, t -> onGetTrailersFailure())
-                .subscribe(videos -> onGetTrailersSuccess(videos), throwable -> onGetTrailersFailure());
+                .subscribe(videos -> onGetTrailersSuccess(videos), throwable -> onGetTrailersFailure(throwable));
     }
 
     private void onGetTrailersSuccess(List<Video> videos) {
@@ -65,15 +66,15 @@ class MovieDetailsPresenterImpl implements MovieDetailsPresenter {
         }
     }
 
-    private void onGetTrailersFailure() {
-        // Do nothing
+    private void onGetTrailersFailure(Throwable error) {
+        view.onGetDetailFailed(new NetworkError(error).getAppErrorMessage());
     }
 
     @Override
     public void showReviews(Movie movie) {
         reviewSubscription = movieDetailsInteractor.getReviews(movie.getId()).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onGetReviewsSuccess, t -> onGetReviewsFailure());
+                .subscribe(this::onGetReviewsSuccess, t -> onGetReviewsFailure(t));
     }
 
     private void onGetReviewsSuccess(List<Review> reviews) {
@@ -82,8 +83,8 @@ class MovieDetailsPresenterImpl implements MovieDetailsPresenter {
         }
     }
 
-    private void onGetReviewsFailure() {
-        // Do nothing
+    private void onGetReviewsFailure(Throwable error) {
+        view.onGetDetailFailed(new NetworkError(error).getAppErrorMessage());
     }
 
     @Override

@@ -13,6 +13,7 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * @author arun
+ * @author Trung Nguyen
  */
 class MoviesListingPresenterImpl implements MoviesListingPresenter {
     private MoviesListingView view;
@@ -82,7 +83,7 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
 
     private void onMovieFetchFailed(Throwable error) {
         currentPage--;
-        view.loadingFailed(new NetworkError(error));
+        view.loadingFailed(new NetworkError(error).getAppErrorMessage());
     }
 
     private boolean isViewAttached() {
